@@ -1,0 +1,217 @@
+if game.CoreGui:FindFirstChild("CmdLite") then
+    game.CoreGui["CmdLite"]:Destroy()
+end
+
+local vVars = {}
+local sec = {}
+local cat = {}
+
+local infJump = nil
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/rodirodi12/roblox-ui/main/zypher%20ui"))()
+local Main = library:CreateMain({ projName="CmdLite", Resizeable = false, MinSize = UDim2.new(0, 400, 0, 400), MinSize = UDim2.new(0, 400, 0, 400)})
+
+
+--Tabs
+cat.Credits = Main:CreateCategory("Twix Hub")
+cat.Visual = Main:CreateCategory("Visual")
+cat.Player = Main:CreateCategory("Player")
+cat.Game_Mods = Main:CreateCategory("Game Mods")
+cat.Teleport = Main:CreateCategory("Teleport")
+cat.Free_Emotes = Main:CreateCategory("Free Emotes")
+cat.Autofarm = Main:CreateCategory("Autofarm")
+
+--Visual Tab Section
+sec.Esp_Section = cat.Visual:CreateSection("Esp")
+sec.Chams_Section = cat.Visual:CreateSection("Chams")
+sec.Effects_Section = cat.Visual:CreateSection("Effects")
+
+--Player Tab Section
+sec.Player_Mods_Section = cat.Player:CreateSection("Player")
+sec.Tools_Section = cat.Player:CreateSection("Tools")
+
+--Game_Mods Tab Section
+sec.Innocent_Section = cat.Game_Mods:CreateSection("Innocent Section")
+sec.Sheriff_Section = cat.Game_Mods:CreateSection("Sheriff Section")
+sec.Murderer_Section = cat.Game_Mods:CreateSection("Murderer Section")
+
+--Teleport Tab Section
+sec.Teleport_Map_Section = cat.Teleport:CreateSection("Teleport Map")
+sec.Spectate_Section = cat.Teleport:CreateSection("Spectate")
+sec.Server_Section = cat.Teleport:CreateSection("Server")
+
+--Free Emotes Tab Section
+sec.Free_Emotes_Section = cat.Free_Emotes:CreateSection("Free Emotes")
+sec.Default_Emotes_Section = cat.Free_Emotes:CreateSection("Default Emotes")
+
+--Autofarm Tab Section
+sec.Auto_Farm_Section = cat.Autofarm:CreateSection("Default Emotes")
+sec.Config_Section = cat.Autofarm:CreateSection("Config")
+
+
+
+--[[
+████████╗███████╗░██████╗████████╗
+╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝
+░░░██║░░░█████╗░░╚█████╗░░░░██║░░░
+░░░██║░░░██╔══╝░░░╚═══██╗░░░██║░░░
+░░░██║░░░███████╗██████╔╝░░░██║░░░
+░░░╚═╝░░░╚══════╝╚═════╝░░░░╚═╝░░░
+]]
+
+
+sec.Devs = cat.Credits:CreateSection("Developers")
+sec.Opts = cat.Credits:CreateSection("Options")
+
+sec.Devs:Create("TextLabel", "CmdMod - Main Developer")
+sec.Devs:Create("TextLabel", "xTheAlex14 - UI Lib Developer")
+sec.Opts:Create("Button", "Close Script", 
+    function()
+        game.CoreGui["CmdLite"]:Destroy()
+    end,
+    {
+            animated = true
+    }
+ )
+sec.Opts:Create("Button", "Rejoin Server", function() local ts = game:GetService("TeleportService") local p = game:GetService("Players").LocalPlayer ts:Teleport(game.PlaceId, p) end)
+
+
+
+
+--[[
+
+░██████╗░█████╗░██████╗░██╗██████╗░████████╗
+██╔════╝██╔══██╗██╔══██╗██║██╔══██╗╚══██╔══╝
+╚█████╗░██║░░╚═╝██████╔╝██║██████╔╝░░░██║░░░
+░╚═══██╗██║░░██╗██╔══██╗██║██╔═══╝░░░░██║░░░
+██████╔╝╚█████╔╝██║░░██║██║██║░░░░░░░░██║░░░
+╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░░░░░╚═╝░░░
+]]
+
+
+--#Infinite Jump
+sec.Player_Mods_Section:Create("Toggle", "Infinite Jump", 
+    function(state)
+        if state == true then
+            infJump = game:GetService("UserInputService").JumpRequest:Connect(function()
+                game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+            end)
+        else
+            if infJump then
+                infJump:Disconnect()
+            end
+        end
+    end,
+    {
+        default = false
+    })
+
+--#Walk Speed
+sec.Player_Mods_Section:Create("Slider", "Walk Speed",
+    function(value)
+        vVars.walkSpeed = value
+    end,
+    {
+        min = 16,
+        max = 400,
+        default = 40,
+        changablevalue = true
+    })
+
+--#No-Clip
+sec.Player_Mods_Section:Create("Toggle", "No-Clip",
+    function(state)
+        if state == true then
+            vVars.clipper = game:GetService("RunService").Stepped:Connect(function()
+                if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Torso") and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Head") then
+                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("Torso").CanCollide = false
+                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("Head").CanCollide = false
+                end
+            end)
+        else
+            if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Torso") and game:GetService("Players").LocalPlayer.Character:FindFirstChild("Head") then
+                game:GetService("Players").LocalPlayer.Character:FindFirstChild("Torso").CanCollide = true
+                game:GetService("Players").LocalPlayer.Character:FindFirstChild("Head").CanCollide = true
+            end
+            if vVars.clipper then
+                vVars.clipper:Disconnect()
+            end
+        end
+
+    end,
+    {
+        default = false
+    })
+
+--#Jump-Power
+sec.Player_Mods_Section:Create("Slider", "Jump Power",
+    function(value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+    end,
+    {
+        min = 50,
+        max = 500,
+        default = 50,
+        changablevalue = true
+    })
+
+
+
+--#Camera
+sec.Player_Mods_Section:Create("Slider", "Field of View",
+    function(value)
+        game:GetService("Workspace").CurrentCamera.FieldOfView = value
+    end,
+    {
+        min = 40, 
+        max = 120,
+        default = 70,
+        changablevalue = true
+    })
+--#Reset Field Of Wiev
+sec.Player_Mods_Section:Create("Button", "Reset Field Of View", function
+
+end)
+--#Max Zoom Distance
+sec.Player_Mods_Section:Create("Slider", "Max Zoom Distance",
+    function(value)
+
+    end,
+    {
+        min = 40,
+        max = 120,
+        changablevalue = true
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+vVars.rStep = game:GetService("RunService").RenderStepped:Connect(function()
+    if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+        if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid").WalkSpeed ~= 0 then
+            game.Players.LocalPlayer.Character:FindFirstChild("Humanoid").WalkSpeed = vVars.walkSpeed
+        end
+    end
+end)
+
+vVars.scriptClosing = game.GetService("CoreGui").ChildRemoved:Connect(function(child)
+    if child.Name == "CmdLite" then
+        if vVars.rStep then
+            vVars.rStep:Disconnect()
+        end
+        if infJump then
+            infJump:Disconnect()
+        end
+        if vVars.scriptClosing then
+            vVars.Script:Disconnect()
+        end
+    end
+end)
